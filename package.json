@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "https://ramialzend.bsite.net",
+ 
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -42,6 +43,7 @@
   "deploy": "gh-pages -d build"
  
   },
+   "homepage": "https://ramaalkhateeb.github.io/TeamManagementProj",
   "browserslist": {
     "production": [
       ">0.2%",
