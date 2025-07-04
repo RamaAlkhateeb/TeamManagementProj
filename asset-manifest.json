@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/TeamManagementProj/static/css/main.55641f1c.css",
+    "main.js": "/TeamManagementProj/static/js/main.2f4e365c.js",
+    "static/media/1.jpg": "/TeamManagementProj/static/media/1.d2940889650b3442ce0d.jpg",
+    "index.html": "/TeamManagementProj/index.html",
+    "main.55641f1c.css.map": "/TeamManagementProj/static/css/main.55641f1c.css.map",
+    "main.2f4e365c.js.map": "/TeamManagementProj/static/js/main.2f4e365c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.55641f1c.css",
+    "static/js/main.2f4e365c.js"
+  ]
+}
