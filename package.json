@@ -43,7 +43,7 @@
   "deploy": "gh-pages -d build"
  
   },
-   "homepage": "https://ramaalkhateeb.github.io/TeamManagementProj",
+   "homepage": ".",
   "browserslist": {
     "production": [
       ">0.2%",
