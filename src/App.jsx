@@ -9,7 +9,7 @@ function App() {
     <Router>
         <Routes>
           <Route path="/" element={<LoginPage />} />
-          <Route path="/login" element="." />
+          <Route path="/login" element="https://team-management-proj.netlify.app" />
           <Route path="/Dash" element={<Dashboard/>} />
           <Route path="/projects" element={<div><Sidebar /></div>} />
         </Routes>
