@@ -60,22 +60,28 @@ export default function EditEmployeeDialog({ open, onClose, editing, onChange, o
               <label className="flex items-center gap-2 text-navy-700 font-semibold mb-1 text-sm">
                 <CalendarDays size={20} /> Birth Date
               </label>
-              <Input type="date" name="birthDate" value={editing?.birthDate || ''} onChange={onChange} />
+             <Input
+  type="date"
+  name="birthDate"
+  value={editing?.birthDate?.split('T')?.[0] || ''}
+  onChange={onChange}
+/>
+
             </div>
             <div>
               <label className="flex items-center gap-2 text-navy-700 font-semibold mb-1 text-sm">
                 <CalendarDays size={20} /> Hire Date
               </label>
-              <Input type="date" name="hireDate" value={editing?.hireDate || ''} onChange={onChange} />
+             <Input
+  type="date"
+  name="hireDate"
+  value={editing?.hireDate?.split('T')?.[0] || ''}
+  onChange={onChange}
+/>
+
             </div>
           </div>
 
-          <div>
-            <label className="flex items-center gap-2 text-navy-700 font-semibold mb-1 text-sm">
-              <MapPin size={20} /> Address
-            </label>
-            <Input name="address" value={editing?.address || ''} onChange={onChange} placeholder="Address" />
-          </div>
         </div>
 
         <DialogFooter className="mt-6 flex justify-end gap-4">

@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { Users, User, CalendarDays, ClipboardList, Building2 } from "lucide-react";
+import {
+  Users,
+  CalendarDays,
+  ClipboardList,
+  Building2,
+} from "lucide-react";
 import axios from "axios";
 
 export default function EditProjectDialog({ open, onClose, project, onSaved }) {
@@ -55,44 +66,49 @@ export default function EditProjectDialog({ open, onClose, project, onSaved }) {
         description: project.description || "",
         startDate: project.startDate?.substring(0, 10) || "",
         endDate: project.endDate?.substring(0, 10) || "",
-        departmentId: project.departmentId || "",
-        enrolledMembersIds: project.enrolledMembersIds || [],
-        guidTasks: project.guidTasks || [],
+        departmentId: String(project.departmentId || ""),
+        enrolledMembersIds: (project.enrolledMembersIds || []).map(String),
+        guidTasks: (project.guidTasks || []).map(String),
       });
     }
   }, [project]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const val = String(value);
 
     if (type === "checkbox" && name === "enrolledMembersIds") {
       setFormData((prev) => ({
         ...prev,
         enrolledMembersIds: checked
-          ? [...prev.enrolledMembersIds, value]
-          : prev.enrolledMembersIds.filter((id) => id !== value),
+          ? [...prev.enrolledMembersIds, val]
+          : prev.enrolledMembersIds.filter((id) => id !== val),
       }));
     } else if (type === "checkbox" && name === "guidTasks") {
       setFormData((prev) => ({
         ...prev,
         guidTasks: checked
-          ? [...prev.guidTasks, value]
-          : prev.guidTasks.filter((id) => id !== value),
+          ? [...prev.guidTasks, val]
+          : prev.guidTasks.filter((id) => id !== val),
       }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({ ...prev, [name]: val }));
     }
   };
 
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`https://ramialzend.bsite.net/api/Projects/${project.id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      await axios.put(
+        `https://ramialzend.bsite.net/api/Projects/${project.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       onSaved();
       onClose();
     } catch (error) {
@@ -102,9 +118,7 @@ export default function EditProjectDialog({ open, onClose, project, onSaved }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent
-        className="border-2 border-navy-900 rounded-4xl max-w-4xl w-full max-h-[80vh] overflow-y-auto bg-white shadow-xl p-8"
-      >
+      <DialogContent className="border-2 border-navy-900 rounded-4xl max-w-4xl w-full max-h-[80vh] overflow-y-auto bg-white shadow-xl p-8">
         <DialogHeader>
           <DialogTitle className="text-3xl font-extrabold text-navy-900 mb-6 text-center">
             Edit Project
@@ -182,7 +196,7 @@ export default function EditProjectDialog({ open, onClose, project, onSaved }) {
             >
               <option value="">Select Department</option>
               {departments.map((dep) => (
-                <option key={dep.id} value={dep.id}>
+                <option key={dep.id} value={String(dep.id)}>
                   {dep.name}
                 </option>
               ))}
@@ -196,12 +210,15 @@ export default function EditProjectDialog({ open, onClose, project, onSaved }) {
             </label>
             <div className="max-h-20 overflow-y-auto space-y-2 pl-1">
               {employees.map((emp) => (
-                <label key={emp.id} className="flex items-center gap-2 text-sm text-gray-800">
+                <label
+                  key={emp.id}
+                  className="flex items-center gap-2 text-sm text-gray-800"
+                >
                   <input
                     type="checkbox"
                     name="enrolledMembersIds"
-                    value={emp.id}
-                    checked={formData.enrolledMembersIds.includes(emp.id)}
+                    value={String(emp.id)}
+                    checked={formData.enrolledMembersIds.includes(String(emp.id))}
                     onChange={handleChange}
                     className="accent-navy-600 w-4 h-4"
                   />
@@ -218,18 +235,19 @@ export default function EditProjectDialog({ open, onClose, project, onSaved }) {
             </label>
             <div className="max-h-20 overflow-y-auto space-y-2 pl-1">
               {tasks.map((task) => (
-                <label key={task.id} className="flex items-center gap-2 text-sm text-gray-800">
-                  <input
-                    type="checkbox"
-                    name="guidTasks"
-                    value={task.id}
-                    checked={formData.guidTasks.includes(task.id)}
-                    onChange={handleChange}
-                    className="accent-navy-600 w-4 h-4"
-                  />
-                  {task.title}
-                </label>
-              ))}
+  <label key={task.id} className="flex items-center gap-2 text-sm text-gray-800">
+    <input
+      type="checkbox"
+      name="guidTasks"
+      value={String(task.taskUniqueIdentifier)} 
+      checked={formData.guidTasks.includes(String(task.taskUniqueIdentifier))}
+      onChange={handleChange}
+      className="accent-navy-600 w-4 h-4"
+    />
+    {task.title}
+  </label>
+))}
+
             </div>
           </div>
         </div>

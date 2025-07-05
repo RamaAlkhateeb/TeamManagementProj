@@ -197,13 +197,13 @@ export default function AddProjectDialog({ open, onClose, onSaved }) {
               {employees.map((emp) => (
                 <label key={emp.id} className="flex items-center gap-2 text-sm text-gray-800">
                   <input
-                    type="checkbox"
-                    name="enrolledMembersIds"
-                    value={emp.id}
-                    checked={form.enrolledMembersIds.includes(emp.id)}
-                    onChange={handleChange}
-                    className="accent-navy-600 w-4 h-4"
-                  />
+  type="checkbox"
+  name="enrolledMembersIds"
+  value={String(emp.id)}
+  checked={form.enrolledMembersIds.includes(String(emp.id))}
+  onChange={handleChange}
+  className="accent-navy-600 w-4 h-4"
+/>
                   {emp.fullName}
                 </label>
               ))}

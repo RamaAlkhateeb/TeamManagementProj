@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from '
 import { Separator } from '../components/ui/separator';
 import AddTaskButton from '../components/AddTaskButton';
 
-const MyTasksPage = () => {
+const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
   const [employeeId, setEmployeeId] = useState(null);
   const [openDialogId, setOpenDialogId] = useState(null);
@@ -29,10 +29,7 @@ const MyTasksPage = () => {
         },
       })
       .then((res) => {
-        const filtered = res.data.data.filter(
-          (task) => task.assignedToEmployeeId === empId
-        );
-        setTasks(filtered);
+        setTasks(res.data.data);
       })
       .catch((err) => console.error("Error fetching tasks:", err));
   }, []);
@@ -101,6 +98,7 @@ const MyTasksPage = () => {
           <p>🎯 Points: {task.pointsValue}</p>
           <p>📁 Project: {Object.values(task.projectIdNames).join(', ')}</p>
           <p>👤 Created by: {task.createdByName}</p>
+          <p>🧑 Assigned to: {task.assignedToName}</p>
         </div>
 
         {/* Show Add Submission button only for pending tasks */}
@@ -168,8 +166,10 @@ const MyTasksPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-blue-800 p-2" >📝 My Task</h1>
-      
+      <h1 className="text-3xl font-bold text-blue-800">📝 My Task</h1>
+      <div className="flex justify-end">
+        <AddTaskButton onTaskAdded={() => window.location.reload()} />
+      </div>
 
       {/* Pending Tasks */}
       <div className="flex flex-wrap gap-6 mb-8">
@@ -203,4 +203,4 @@ const MyTasksPage = () => {
   );
 };
 
-export default MyTasksPage;
+export default TasksPage;

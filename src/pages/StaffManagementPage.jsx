@@ -8,7 +8,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import EditEmployeeDialog from '../components/EditEmployeeDialog';
-import AddEmployeeDialog from '../components/AddEmployeeDialog';
+import RegisterUser from '../components/AddEmployeeSection';
+import { jwtDecode } from 'jwt-decode';
 
 const API_BASE = 'https://ramialzend.bsite.net/api/Employees';
 
@@ -22,19 +23,37 @@ axios.interceptors.request.use((config) => {
 
 export default function StaffManagement() {
   const [employees, setEmployees] = useState([]);
-  const [selected, setSelected] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [snack, setSnack] = useState({ open: false, message: '', severity: 'success' });
+  const [currentEmployeeId, setCurrentEmployeeId] = useState(null);
 
   useEffect(() => {
-    fetchEmployees();
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setCurrentEmployeeId(decoded?.Employee_Id);
+      } catch (err) {
+        console.error("Invalid token:", err);
+      }
+    }
   }, []);
+
+  useEffect(() => {
+    if (currentEmployeeId) {
+      fetchEmployees();
+    }
+  }, [currentEmployeeId]);
 
   const fetchEmployees = async () => {
     try {
       const res = await axios.get(API_BASE);
-      setEmployees(res.data.data);
+      const all = res.data.data;
+      const filtered = all.filter(emp =>
+        emp.id !== parseInt(currentEmployeeId) && emp.id !== 18
+      );
+      setEmployees(filtered);
     } catch {
       setSnack({ open: true, message: 'Failed to load employees', severity: 'error' });
     }
@@ -52,86 +71,47 @@ export default function StaffManagement() {
     }
   };
 
-  const handleAddOrEdit = async () => {
-  const required = ['firstName', 'lastName', 'email', 'nationalIdentificationNumber', 'userName', 'password'];
-  if (required.some(f => !editing?.[f] || editing[f].toString().trim() === '')) {
-    setSnack({ open: true, message: 'Please fill in required fields', severity: 'warning' });
-    return;
-  }
+  const handleEditEmployee = (emp) => {
+    const [firstName, ...lastNameParts] = emp.fullName?.split(' ') || [];
+    const lastName = lastNameParts.join(' ');
 
-  const formatDate = (date) => {
-  if (!date) return null;
-  const d = new Date(date);
-  return d.toISOString().split('T')[0] + 'T00:00:00'; // "YYYY-MM-DDT00:00:00"
-};
+    setEditing({
+      id: emp.id,
+      firstName,
+      lastName,
+      email: emp.email || '',
+      phone: emp.phone || '',
+      address: emp.address || '',
+      birthDate: emp.birthDate ? emp.birthDate.split('T')[0] : '',
+      hireDate: emp.hireDate ? emp.hireDate.split('T')[0] : '',
+      nationalIdentificationNumber: emp.nationalIdentificationNumber || '',
+    });
 
+    setFormOpen(true);
+  };
 
-  try {
-    if (editing.id) {
-      // تحديث موظف
-      const updatePayload = {
-        fullName: `${editing.firstName} ${editing.lastName}`,
-        email: editing.email,
-        phone: editing.phone || '',
-        address: editing.address || '',
-        birthDate: formatDate(editing.birthDate),
-        hireDate: formatDate(editing.hireDate),
-        nationalIdentificationNumber: editing.nationalIdentificationNumber,
-        departments: []
-      };
-      await axios.put(`${API_BASE}/${editing.id}`, updatePayload);
-      setSnack({ open: true, message: 'Employee updated successfully', severity: 'success' });
-    } else {
-      // إضافة موظف
-      const selectedDepartments = departmentsList.filter(dep =>
-  editing.departmentIds.includes(dep.id)
-);
-const payload = {
-  UserName: editing.userName,
-  Password: editing.password,
-  FirstName: editing.firstName,
-  LastName: editing.lastName,
-  NationalIdentificationNumber: editing.nationalIdentificationNumber,
-  BirthDate: formatDate(editing.birthDate),
- HireDate: formatDate(editing.hireDate),
-  Phone: editing.phone || '',
-  Email: editing.email,
-  ImagePath: editing.imagePath || '',
-  Address: editing.address || '',
-  DepartmentIds: editing.departmentIds
-};
-
-      const token = localStorage.getItem('token');
-      console.log('Payload to register:', payload);
-
-      await axios.post('https://ramialzend.bsite.net/User/register', payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      setSnack({ open: true, message: 'Employee added successfully', severity: 'success' });
+  const handleEditSave = async () => {
+    if (!editing?.id) {
+      setSnack({ open: true, message: 'Employee ID is missing', severity: 'error' });
+      return;
     }
 
-    fetchEmployees();
-    setFormOpen(false);
-    setEditing(null);
-  } catch (err) {
-    console.error('Error while saving employee:', err.response?.data || err);
-    setSnack({ open: true, message: 'Error saving employee', severity: 'error' });
-  }
-};
-const [departmentsList, setDepartmentsList] = useState([]);
+    try {
+      const payload = {
+        ...editing,
+        birthDate: editing.birthDate,
+        hireDate: editing.hireDate
+      };
 
-const fetchDepartments = async () => {
-  const res = await axios.get('https://ramialzend.bsite.net/Departments');
-  setDepartmentsList(res.data.data);
-};
-
-useEffect(() => {
-  fetchDepartments();
-}, []);
+      await axios.put(`${API_BASE}/${editing.id}`, payload);
+      setSnack({ open: true, message: 'Employee updated successfully', severity: 'success' });
+      setFormOpen(false);
+      setEditing(null);
+      fetchEmployees();
+    } catch (err) {
+      setSnack({ open: true, message: 'Failed to update employee', severity: 'error' });
+    }
+  };
 
   return (
     <Box sx={{ px: 4, py: 5, background: '#f4f6f8', minHeight: '100vh' }}>
@@ -141,19 +121,7 @@ useEffect(() => {
           startIcon={<AddCircleIcon />}
           sx={{ background: '#0d47a1', color: '#fff', '&:hover': { background: '#1565c0' } }}
           onClick={() => {
-            setEditing({
-              userName: '',
-              password: '',
-              firstName: '',
-              lastName: '',
-              nationalIdentificationNumber: '',
-              birthDate: '',
-              phone: '',
-              email: '',
-              address: '',
-              departmentIds: [],
-              imagePath: ''
-            });
+            setEditing(null);
             setFormOpen(true);
           }}
         >
@@ -229,47 +197,42 @@ useEffect(() => {
                 >
                   Delete
                 </Button>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={(e) => { e.stopPropagation(); setSelected(emp); }}
-                >
-                  View
-                </Button>
               </Box>
             </Box>
           </Grid>
         ))}
       </Grid>
-      {!editing ? null : (
-  editing?.id ? (
-    <EditEmployeeDialog
-      open={formOpen}
-      onClose={() => {
-        setFormOpen(false);
-        setEditing(null);
-      }}
-      editing={editing}
-      onChange={(e) => setEditing({ ...editing, [e.target.name]: e.target.value })}
-      onSave={handleAddOrEdit}
-    />
-  ) : (
-        <AddEmployeeDialog
-  open={formOpen}
-  onClose={() => {
-    setFormOpen(false);
-    setEditing(null);
-  }}
-  form={editing}
-  onChange={(e) => setEditing({ ...editing, [e.target.name]: e.target.value })}
-  onSave={handleAddOrEdit}
-  departments={departmentsList} 
-/>
 
+      {formOpen && (
+        editing ? (
+          <EditEmployeeDialog
+            open={formOpen}
+            editing={editing}
+            onClose={() => { setFormOpen(false); setEditing(null); }}
+            onChange={(e) => setEditing(prev => ({ ...prev, [e.target.name]: e.target.value }))}
+            onSave={handleEditSave}
+          />
+        ) : (
+          <RegisterUser
+            handleClose={() => setFormOpen(false)}
+            onRegister={() => {
+              fetchEmployees();
+              setFormOpen(false);
+            }}
+            showSnack={(msg, severity) => setSnack({ open: true, message: msg, severity })}
+          />
+        )
+      )}
 
-  )
-)}
-
+      <Snackbar
+        open={snack.open}
+        autoHideDuration={3000}
+        onClose={() => setSnack({ ...snack, open: false })}
+      >
+        <Alert severity={snack.severity} onClose={() => setSnack({ ...snack, open: false })}>
+          {snack.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

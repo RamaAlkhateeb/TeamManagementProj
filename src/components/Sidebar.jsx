@@ -16,11 +16,17 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import InsightsIcon from '@mui/icons-material/Insights';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 
-import {jwtDecode} from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode';
 
 export default function Sidebar({ activePage, setActivePage }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const permissions = {
+    Admin: ['profile', 'projects', 'staff', 'reports', 'departement', 'tasks'],
+    TeamLeader: ['profile', 'my projects', 'my tasks', 'projects', 'staff', 'departement', 'time', 'tasks'],
+    Employee: ['profile', 'my projects', 'my tasks'],
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -28,12 +34,12 @@ export default function Sidebar({ activePage, setActivePage }) {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        const employeeId = decoded['Employee_Id'] || decoded['sub']; // حسب التوكن
+        const employeeId = decoded['Employee_Id'] || decoded['sub'];
 
         if (employeeId) {
           fetch('https://ramialzend.bsite.net/api/Employees', {
             headers: {
-              'Authorization': `Bearer ${token}`, // مهم جدًا إضافة التوكن هنا
+              'Authorization': `Bearer ${token}`,
             },
           })
             .then(res => {
@@ -46,11 +52,20 @@ export default function Sidebar({ activePage, setActivePage }) {
               const employee = response.data.find(emp => emp.id === Number(employeeId));
 
               if (employee) {
+                const roles = employee.roles || ['Employee'];
+
+                // اختيار الرول الذي يملك أكثر صلاحيات
+                const roleWithMostPermissions = roles.reduce((maxRole, currentRole) => {
+                  const currentPerms = permissions[currentRole]?.length || 0;
+                  const maxPerms = permissions[maxRole]?.length || 0;
+                  return currentPerms > maxPerms ? currentRole : maxRole;
+                }, roles[0]);
+
                 setUser({
                   name: employee.fullName,
                   email: employee.email,
                   avatar: employee.imagePath || '',
-                  role: employee.roles?.[0] || 'Employee',
+                  role: roleWithMostPermissions,
                 });
               } else {
                 console.error('Employee not found');
@@ -75,12 +90,6 @@ export default function Sidebar({ activePage, setActivePage }) {
   }, []);
 
   const defaultAvatar = 'https://www.w3schools.com/howto/img_avatar.png';
-
-  const permissions = {
-    Admin: ['profile', 'my projects', 'my tasks', 'projects', 'staff', 'reports', 'departement'],
-    TeamLeader: ['profile', 'my projects', 'my tasks', 'projects', 'staff', 'time', 'rewards', 'reports'],
-    Employee: ['profile', 'my projects', 'my tasks'],
-  };
 
   const renderButton = (label, icon, pageKey) => {
     if (!user || !permissions[user.role]?.includes(pageKey)) return null;
@@ -154,11 +163,8 @@ export default function Sidebar({ activePage, setActivePage }) {
 
           {renderButton('Project Management', <FolderSharedIcon />, 'projects')}
           {renderButton('Staff Management', <GroupsIcon />, 'staff')}
-          {renderButton('Departement Management',  <ApartmentIcon />, 'departement')}
-
-          <Divider sx={{ width: '100%', borderColor: '#334155', my: 2 }} />
-
-          {renderButton('Reports & Statistics', <InsightsIcon />, 'reports')}
+          {renderButton('Departement Management', <ApartmentIcon />, 'departement')}
+          {renderButton('Tasks Management', <CheckCircleOutlineIcon />, 'tasks')}
 
           <Divider sx={{ width: '100%', borderColor: '#334155', my: 2 }} />
 

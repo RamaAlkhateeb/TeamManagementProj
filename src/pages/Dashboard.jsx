@@ -7,6 +7,7 @@ import DepartmentsPage from './DepartmentsPage';
 import ProjectsPage from './ProjectsPage';
 import MyProjectsPage from './MyProjectPage';
 import MyTasksPage from './MyTaskPage';
+import TasksPage from './TaskManagementPage';
 export default function Dashboard() {
   const [activePage, setActivePage] = useState('projects');
 
@@ -24,8 +25,8 @@ export default function Dashboard() {
         return <StaffManagement />;
       case 'departement':
         return <div>< DepartmentsPage /></div>;
-      case 'reports':
-        return <div>Reports and Stats</div>;
+      case 'tasks':
+        return <div><TasksPage /></div>;
       default:
         return <div>Welcome to the Dashboard</div>;
     }
