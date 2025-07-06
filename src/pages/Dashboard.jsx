@@ -9,7 +9,7 @@ import MyProjectsPage from './MyProjectPage';
 import MyTasksPage from './MyTaskPage';
 import TasksPage from './TaskManagementPage';
 export default function Dashboard() {
-  const [activePage, setActivePage] = useState('projects');
+  const [activePage, setActivePage] = useState('profile');
 
   const renderPage = () => {
     switch (activePage) {
