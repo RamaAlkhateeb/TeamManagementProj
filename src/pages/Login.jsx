@@ -94,7 +94,7 @@ export default function LoginPage() {
             Welcome Back 👋
           </h2>
           <p className="text-white/70 dark:text-black/60 mb-6 text-sm text-center">
-            Please sign in to continue
+            Please log in to continue
           </p>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
@@ -162,7 +162,7 @@ export default function LoginPage() {
               </label>
             </div>
 
-            {/* Sign In Button */}
+            {/* log In Button */}
             <motion.button
               type="submit"
               whileTap={{ scale: 0.97 }}
@@ -178,7 +178,7 @@ export default function LoginPage() {
                 <Loader className="animate-spin" size={18} />
               ) : (
                 <>
-                  <Lock size={18} /> Sign In
+                  <Lock size={18} /> Log In
                 </>
               )}
             </motion.button>
