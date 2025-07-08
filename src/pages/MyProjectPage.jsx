@@ -53,7 +53,7 @@ export default function ProjectsPage() {
         setProjects(filtered);
       }
     } catch (e) {
-      console.error("خطأ في جلب المشاريع:", e);
+      console.error("Eroor:", e);
     } finally {
       setLoading(false);
     }
@@ -90,9 +90,9 @@ export default function ProjectsPage() {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">جارٍ تحميل المشاريع...</p>
+        <p className="text-gray-500">Loading projects...</p>
       ) : projects.length === 0 ? (
-        <p className="text-gray-500">لا توجد مشاريع مخصصة لك.</p>
+        <p className="text-gray-500">There are no projects specifically for you.</p>
       ) : (
         <div className="flex flex-wrap gap-6">
           {projects.map((project) => (
