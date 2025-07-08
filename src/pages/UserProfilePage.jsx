@@ -32,66 +32,86 @@ export default function UserProfilePage() {
       return null;
     }
   };
-
   useEffect(() => {
-    const username = getUsernameFromToken();
-    if (!username) return;
+  const username = getUsernameFromToken();
+  if (!username) return;
 
-    fetch("https://ramialzend.bsite.net/api/Employees", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
+  fetch("https://ramialzend.bsite.net/api/Employees", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data.isSuccess) {
+        console.error("API returned error:", data.message);
+        return;
+      }
+
+      const employee = data.data.find((emp) => {
+        if (!emp.fullName) return false;
+        const firstName = emp.fullName.split(" ")[0].toLowerCase();
+        return firstName === username.toLowerCase();
+      });
+
+      if (employee) {
+        setUserData(employee);
+        setFullName(employee.fullName || "");
+        setNationalId(employee.nationalIdentificationNumber || "");
+        setBirthDate(employee.birthDate?.slice(0, 10) || "");
+        setHireDate(employee.hireDate?.slice(0, 10) || "");
+        setPhone(employee.phone || "");
+        setEmail(employee.email || "");
+        setAddress(employee.address || "");
+        setRoles(employee.roles || []);
+        setDepartments(employee.departments || []);
+        setProfileImage(employee.imagePath || "https://via.placeholder.com/150");
+      } else {
+        console.error("Employee not found for username:", username);
+      }
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.isSuccess) {
-          console.error("API returned error:", data.message);
-          return;
-        }
-
-        const employee = data.data.find((emp) => {
-          if (!emp.fullName) return false;
-          const firstName = emp.fullName.split(" ")[0].toLowerCase();
-          return firstName === username.toLowerCase();
-        });
-
-        if (employee) {
-          setUserData(employee);
-          setFullName(employee.fullName || "");
-          setNationalId(employee.nationalIdentificationNumber || "");
-          setBirthDate(employee.birthDate?.slice(0, 10) || "");
-          setHireDate(employee.hireDate?.slice(0, 10) || "");
-          setPhone(employee.phone || "");
-          setEmail(employee.email || "");
-          setAddress(employee.address || "");
-          setRoles(employee.roles || []);
-          setDepartments(employee.departments || []);
-          setProfileImage(employee.imagePath || "https://via.placeholder.com/150");
-        } else {
-          console.error("Employee not found for username:", username);
-        }
-      })
-      .catch((err) => console.error("Fetch error:", err));
-  }, []);
+    .catch((err) => console.error("Fetch error:", err));
+}, []);
 
   const handleSave = () => {
-    // هنا ممكن تضيف طلب إرسال البيانات للسيرفر
-    const payload = {
-      fullName,
-      nationalIdentificationNumber: nationalId,
-      birthDate,
-      hireDate,
-      phone,
-      email,
-      address,
-      imagePath: profileImage,
-      roles,
-      departments,
-    };
-    console.log("Submitting:", payload);
-    toast.success("Changes saved successfully!");
-    setIsEditing(false);
+  if (!userData?.id) {
+    toast.error("Changes cannot be saved without the employee.");
+    return;
+  }
+
+  const payload = {
+    firstName: null,
+    lastName: null,
+    nationalIdentificationNumber: nationalId,
+    imagePath: profileImage,
+    birthDate,
+    hireDate,
+    phone,
+    email,
+    address,
   };
+
+  fetch(`https://ramialzend.bsite.net/api/Employees/${userData.id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json-patch+json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify(payload),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Network response was not ok");
+      return res.json();
+    })
+    .then(() => {
+      toast.success("Changes saved successfully!");
+      setIsEditing(false);
+    })
+    .catch((error) => {
+      console.error("Error updating employee:", error);
+      toast.error("An error occurred while saving.");
+    });
+};
 
   return (
     <div className="bg-gray-50 min-h-screen flex justify-center items-center px-4 py-10">
