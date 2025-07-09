@@ -233,7 +233,7 @@ export default function DepartmentsPage() {
 
     const enrolledEmployeeIds = addEmployeeSelectors
       .filter((id) => id !== null)
-      .filter((id, idx, arr) => arr.indexOf(id) === idx); // unique ids only
+      .filter((id, idx, arr) => arr.indexOf(id) === idx); 
 
     const newDept = {
       name: addFormData.name,
@@ -332,7 +332,7 @@ export default function DepartmentsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {departments.map((dept) => (
             <Card className="bg-white border-2 border-blue-900 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 relative">
-  {/* أيقونة الحذف في الزاوية العلوية اليمنى */}
+ 
   <button
     onClick={() => handleDelete(dept.id)}
     className="absolute top-2 right-2 text-red-600 hover:text-red-800"
