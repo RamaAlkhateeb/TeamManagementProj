@@ -16,7 +16,7 @@ export default function ProjectsPage() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [detailsLoading, setDetailsLoading] = useState(false);
 
-  // جلب fullName من API حسب Employee_Id المأخوذ من التوكن
+ 
   const fetchUserName = async (token) => {
     try {
       const decoded = jwtDecode(token);
@@ -28,12 +28,12 @@ export default function ProjectsPage() {
       });
       if (res.data.isSuccess) return res.data.data.fullName;
     } catch (e) {
-      console.error("خطأ في جلب بيانات الموظف:", e);
+      console.error("error:", e);
     }
     return "";
   };
 
-  // جلب المشاريع وتصفية حسب الاسم
+ 
   const fetchProjects = async () => {
     setLoading(true);
     const token = localStorage.getItem("token");
@@ -63,7 +63,7 @@ export default function ProjectsPage() {
     fetchProjects();
   }, []);
 
-  // فتح تفاصيل المشروع
+  
   const handleViewDetails = async (id) => {
     setDetailsOpen(true);
     setDetailsLoading(true);
@@ -105,7 +105,7 @@ export default function ProjectsPage() {
         </div>
       )}
 
-      {/* النوافذ/Dialogs */}
+      {/* /Dialogs */}
       <ProjectDetailsDialog
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
