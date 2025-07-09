@@ -11,7 +11,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [darkMode] = useState(true); // Fixed dark mode
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
