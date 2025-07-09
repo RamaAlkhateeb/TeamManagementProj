@@ -16,12 +16,12 @@ import {
 import { Box, Button, IconButton, LinearProgress, Typography } from "@mui/material";
 import axios from 'axios';
 
-// Theme constants
+
 const ICON_STYLE = { color: '#1e40af', fontSize: 40 };
 const PRIMARY_COLOR = '#1e40af';
 const TITLE_COLOR = '#1e3a8a';
 
-// Icon selector based on project name
+
 const getProjectIcon = (name = '') => {
   const lowerName = name.toLowerCase();
 
@@ -60,8 +60,7 @@ export default function ProjectCard({ project, onView, onEdit, onDelete }) {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const token = localStorage.getItem('token'); // Get the token from localStorage
-
+        const token = localStorage.getItem('token'); 
         // Make the request with the token
         const response = await axios.get('https://ramialzend.bsite.net/api/Task', {
           headers: {
