@@ -48,7 +48,7 @@ export default function AddEmployeeDialog({ open, onClose, onChange, onSave, for
             <TextField fullWidth label="Address" name="address" value={form.address} onChange={handleChange} />
           </Grid>
 
-          {/* 🔽 القائمة المنسدلة للأقسام */}
+         
           <Grid item xs={12}>
             <FormControl fullWidth>
               <InputLabel id="departments-label">Departments</InputLabel>
