@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode] = useState(true); // Fixed dark mode
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -62,11 +62,11 @@ export default function LoginPage() {
 
   return (
     <div
-      className={`min-h-screen px-4 flex items-center justify-center transition-colors duration-300  ${
+      className={`min-h-screen px-4 flex items-center justify-center transition-colors duration-300 ${
         darkMode
           ? "bg-gradient-to-br from-[#002855] via-[#023E7D] to-[#0353A4]"
           : "bg-gradient-to-br from-white via-blue-100 to-blue-200"
-      } `}
+      }`}
     >
       <motion.div
         className="flex flex-col md:flex-row w-full max-w-3xl rounded-2xl overflow-hidden shadow-2xl relative"
@@ -94,7 +94,7 @@ export default function LoginPage() {
             Welcome Back 👋
           </h2>
           <p className="text-white/70 dark:text-black/60 mb-6 text-sm text-center">
-            Please log in to continue
+            Please sign in to continue
           </p>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
@@ -162,7 +162,7 @@ export default function LoginPage() {
               </label>
             </div>
 
-            {/* log In Button */}
+            {/* Sign In Button */}
             <motion.button
               type="submit"
               whileTap={{ scale: 0.97 }}
@@ -178,7 +178,7 @@ export default function LoginPage() {
                 <Loader className="animate-spin" size={18} />
               ) : (
                 <>
-                  <Lock size={18} /> Log In
+                  <Lock size={18} /> Sign In
                 </>
               )}
             </motion.button>
@@ -188,7 +188,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-
-
-
