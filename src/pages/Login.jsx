@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -185,4 +186,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
 
