@@ -62,9 +62,7 @@ export default function LoginPage() {
   return (
     <div
       className={`min-h-screen px-4 flex items-center justify-center transition-colors duration-300 ${
-        darkMode
-          ? "bg-gradient-to-br from-[#002855] via-[#023E7D] to-[#0353A4]"
-          : "bg-gradient-to-br from-white via-blue-100 to-blue-200"
+        
       }`}
     >
       <motion.div
@@ -187,3 +185,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
