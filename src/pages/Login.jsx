@@ -62,9 +62,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className={`min-h-screen px-4 flex items-center justify-center transition-colors duration-300 ${
-        
-      }`}
+      className={`min-h-screen px-4 flex items-center justify-center transition-colors duration-300 `}
     >
       <motion.div
         className="flex flex-col md:flex-row w-full max-w-3xl rounded-2xl overflow-hidden shadow-2xl relative"
@@ -186,5 +184,6 @@ export default function LoginPage() {
     </div>
   );
 }
+
 
 
